@@ -1,12 +1,14 @@
 import React from "react";
 import { View, Text } from "react-native";
 import { styles } from "../styles/LoginScreenStyles";
-import InputField from "../components/InputField";
-import useLogin from "../hooks/useLogin";
-import CustomButton from "../components/CustomButton";
-import LinkText from "../components/LinkText";
 import CustomSnackbar from "../components/CustomSnackbar";
-import { Chip, Divider } from "react-native-paper";
+import { Divider } from "react-native-paper";
+import useLogin from "../hooks/useLogin";
+import PasswordLogin from "../components/PasswordInput";
+import OtpLogin from "../components/OtpInput";
+import ToggleLoginMethod from "../components/ToggleLogin";
+import EmailInput from "../components/EmailInput";
+import LinkText from "../components/LinkText";
 
 export default function LoginScreen({ navigation }) {
   const {
@@ -30,81 +32,37 @@ export default function LoginScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <Text style={styles.welcomeText}>Welcome Back!</Text>
-      <InputField
-        label="Email"
+      <EmailInput
         value={credentials.email}
         onChangeText={(value) => handleChange("email", value)}
-        error={!!errors.email}
+        error={errors.email}
       />
-      {errors.email ? (
-        <Text style={styles.errorText}>{errors.email}</Text>
-      ) : null}
-
       {loginMethod === "email-password" && !otpSent && (
-        <>
-          <InputField
-            label="Password"
-            value={credentials.password}
-            onChangeText={(value) => handleChange("password", value)}
-            secureTextEntry
-            error={!!errors.password}
-          />
-          {errors.password ? (
-            <Text style={styles.errorText}>{errors.password}</Text>
-          ) : null}
-          <CustomButton
-            title={" Login"}
-            onPress={handleSubmit}
-            loading={loading}
-          />
-        </>
+        <PasswordLogin
+          password={credentials.password}
+          onPasswordChange={(value) => handleChange("password", value)}
+          onSubmit={handleSubmit}
+          error={errors.password}
+          loading={loading}
+          navigation={navigation}
+        />
       )}
-
       {loginMethod === "email-otp" && (
-        <>
-          {otpSent ? (
-            <>
-              <InputField
-                label="OTP"
-                value={credentials.otp}
-                onChangeText={(value) => handleChange("otp", value)}
-                keyboardType="numeric"
-                error={!!otpError}
-                style={styles.input}
-              />
-              {otpError ? (
-                <Text style={styles.errorText}>{otpError}</Text>
-              ) : null}
-              <CustomButton
-                title={" Verify OTP"}
-                onPress={onVerifyOtpClick}
-                loading={loading}
-              />
-              {showResendOtpButton && (
-                <LinkText
-                  title={"Resend OTP"}
-                  onPress={onResendOtpClick}
-                  disabled={loading}
-                />
-              )}
-            </>
-          ) : (
-            <CustomButton
-              title={" Send OTP"}
-              onPress={handleSendOtp}
-              loading={loading}
+        <OtpLogin
+          otpSent={otpSent}
+          otp={credentials.otp}
+          onOtpChange={(value) => handleChange("otp", value)}
+          otpError={otpError}
+          loading={loading}
+          onSendOtp={handleSendOtp}
+          onVerifyOtp={onVerifyOtpClick}
+          showResendOtpButton={showResendOtpButton}
+          onResendOtpClick={onResendOtpClick}
             />
-          )}
-        </>
       )}
-
-      <LinkText
-        title={
-          loginMethod === "email-password"
-            ? "Login with OTP"
-            : "Login with Password"
-        }
-        onPress={toggleLoginMethod}
+      <ToggleLoginMethod
+        loginMethod={loginMethod}
+        toggleLoginMethod={toggleLoginMethod}
       />
       <Divider />
       <LinkText title={"OR"} />

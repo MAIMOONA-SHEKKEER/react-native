@@ -1,10 +1,16 @@
-import React from 'react';
-import { Snackbar } from 'react-native-paper';
-import { StyleSheet, View } from 'react-native';
+import React from "react";
+import { Snackbar } from "react-native-paper";
+import { StyleSheet, View } from "react-native";
 
-const CustomSnackbar = ({ visible, message, onDismiss, duration = 5000, type = 'info' }) => {
-  // Determine the background color based on the type
-  const backgroundColor = type === 'error' ? 'red' : type === 'success' ? 'green' : 'black';
+const CustomSnackbar = ({
+  visible,
+  message,
+  onDismiss,
+  duration = 5000,
+  type = "info",
+}) => {
+  const backgroundColor =
+    type === "error" ? "red" : type === "success" ? "green" : "black";
 
   return (
     <View style={styles.container}>
@@ -13,12 +19,12 @@ const CustomSnackbar = ({ visible, message, onDismiss, duration = 5000, type = '
         onDismiss={onDismiss}
         duration={duration}
         action={{
-          label: 'Dismiss',
+          label: "Dismiss",
           onPress: () => {
             onDismiss();
           },
         }}
-        style={[styles.snackbar, { backgroundColor }]} // Apply the background color
+        style={[styles.snackbar, { backgroundColor }]}
       >
         {message}
       </Snackbar>
@@ -28,12 +34,10 @@ const CustomSnackbar = ({ visible, message, onDismiss, duration = 5000, type = '
 
 const styles = StyleSheet.create({
   container: {
-    // Ensure the container fills the screen for proper Snackbar positioning
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   snackbar: {
-    // Default snackbar styling
     marginBottom: 16,
   },
 });

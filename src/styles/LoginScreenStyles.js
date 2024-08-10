@@ -2,8 +2,7 @@ import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
   container: {
-    justifyContent: 'center',
-    backgroundColor: '#f5f5f5',
+    justifyContent:"flex-start",
     margin:16
   },
   welcomeText: {
@@ -15,5 +14,18 @@ export const styles = StyleSheet.create({
     color: 'red',
     textAlign: 'center',
     marginBottom: 16,
+  },
+  otpContainer: {
+    marginBottom: 20,
+  },
+  otpInput: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    textAlign: "center",
+    fontSize: 15,
+    borderRadius: 5,
+  },
+  loader: {
+    marginTop: 10,
   },
 });
