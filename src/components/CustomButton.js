@@ -1,15 +1,19 @@
 import React from 'react';
-import { Button } from 'react-native-paper';
+import { ActivityIndicator, Button } from 'react-native-paper';
 
-export default function CustomButton({ title, onPress, disabled }) {
+export default function CustomButton({ title, onPress, disabled,loading }) {
   return (
     <Button 
       mode="contained" 
       onPress={onPress} 
       disabled={disabled}
-      style={{backgroundColor:"#4B0082"}}
+      loading={loading}
+      style={{
+        backgroundColor: disabled ? "#A9A9A9" : "#4B0082",
+        opacity: disabled ? 0.6 : 1,
+      }}
     >
-      {title}
+     {loading ? <ActivityIndicator animating={true} color="#FFFFFF" size="small" /> : title}
     </Button>
   );
 }

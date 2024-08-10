@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { handleSendOtp, generateSnackbarMessage, validateOtp } from "../utils/authUtils";
+import {
+  handleSendOtp,
+  generateSnackbarMessage,
+  validateOtp,
+} from "../utils/authUtils";
 import { validateEmail } from "../utils/validators";
 import { resetPassword } from "../config/auth";
 
@@ -124,6 +128,9 @@ export const useResetPassword = () => {
     setShowResendOtpButton(false);
   };
 
+  const handleSnackbarClose = () =>
+    setSnackbar((prev) => ({ ...prev, visible: false }));
+
   return {
     credentials,
     otpSent,
@@ -139,5 +146,6 @@ export const useResetPassword = () => {
     showResendOtpButton,
     onResendOtpClick,
     setSnackbar,
+    handleSnackbarClose,
   };
 };

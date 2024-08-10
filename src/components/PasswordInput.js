@@ -25,7 +25,7 @@ export default function PasswordLogin({
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
       <LinkText
         title={"Forgot Password?"}
-        onPress={() => navigation.navigate("ResetPassword")}
+        onPress={() => navigation.navigate("Reset Password")}
       />
       <CustomButton title={"Login"} onPress={onSubmit} loading={loading} />
     </>

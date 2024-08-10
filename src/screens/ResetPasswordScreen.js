@@ -1,17 +1,13 @@
 import React, { useState } from "react";
 import { View } from "react-native";
-import {
-  TextInput,
-  Button,
-  Text,
-  Snackbar,
-  ActivityIndicator,
-} from "react-native-paper";
+import { TextInput, Text, Snackbar } from "react-native-paper";
 import { useResetPassword } from "../hooks/useResetPassword";
-import OTPInputView from "react-native-otp-textinput";
 import LinkText from "../components/LinkText";
 import InputField from "../components/InputField";
 import OtpLogin from "../components/OtpInput";
+import CustomButton from "../components/CustomButton";
+import CustomSnackbar from "../components/CustomSnackbar";
+import { styles } from "../styles/ResetPasswordScreenStyles";
 
 const ResetPasswordScreen = () => {
   const {
@@ -26,7 +22,7 @@ const ResetPasswordScreen = () => {
     handleOtpChange,
     showResendOtpButton,
     onResendOtpClick,
-    setSnackbar,
+    handleSnackbarClose,
   } = useResetPassword();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -34,36 +30,31 @@ const ResetPasswordScreen = () => {
   const handleClickShowPassword = () => setShowPassword((prev) => !prev);
 
   return (
-    <View style={{ flex: 1, justifyContent: "center", padding: 16 }}>
+    <View style={styles.container}>
       <LinkText
         title={otpSent ? "Reset Password" : "Request OTP for Password Change"}
       />
       {!otpSent ? (
         <>
-          <TextInput
-            mode="outlined"
+          <InputField
             label="Email Address"
             value={credentials.email}
             onChangeText={(value) => handleChange("email", value)}
             error={!!errors.email}
-            style={{ marginBottom: 16 }}
           />
           {errors.email ? (
-            <Text style={{ color: "red" }}>{errors.email}</Text>
+            <Text style={styles.errorText}>{errors.email}</Text>
           ) : null}
-          <Button
-            mode="contained"
+          <CustomButton
+            title={"Send OTP"}
             onPress={handleSendOtp}
-            disabled={!credentials.email.trim() || loading}
             loading={loading}
-            style={{ marginBottom: 16 }}
-          >
-            Send OTP
-          </Button>
+            disabled={credentials.email.trim() === "" || loading}
+          />
         </>
       ) : (
         <>
-             <OtpLogin
+          <OtpLogin
             otpSent={otpSent}
             otp={credentials.otp}
             onOtpChange={handleOtpChange}
@@ -92,30 +83,24 @@ const ResetPasswordScreen = () => {
           {errors.newPassword ? (
             <Text style={{ color: "red" }}>{errors.newPassword}</Text>
           ) : null}
-          <Button
-            mode="contained"
+          <CustomButton
+            title={"Reset"}
             onPress={handleSubmit}
             loading={loading}
-            style={{ marginBottom: 16 }}
-          >
-            Reset
-          </Button>
+          />
 
           {showResendOtpButton && (
-            <Button mode="text" onPress={onResendOtpClick}>
-              Resend OTP
-            </Button>
+            <LinkText title={"Resend OTP"} onPress={onResendOtpClick} />
           )}
         </>
       )}
-
-      <Snackbar
+      <CustomSnackbar
         visible={snackbar.visible}
-        onDismiss={() => setSnackbar((prev) => ({ ...prev, visible: false }))}
+        onDismiss={handleSnackbarClose}
+        type={snackbar.severity}
         duration={3000}
-      >
-        {snackbar.message}
-      </Snackbar>
+        message={snackbar.message}
+      />
     </View>
   );
 };

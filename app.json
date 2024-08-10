@@ -15,16 +15,16 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.anonymous.reactnativeapp",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.anonymous.reactnativeapp"
+      "enableHermes": true
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
-
     "debuggerHost": "localhost:8081"
   }
 }

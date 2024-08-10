@@ -2,8 +2,10 @@ import { sendOtp } from "../config/auth";
 import { verifyOtp } from "../config/user";
 import { fieldMapping } from "../constants/fieldMapping";
 
-
 export const generateSnackbarMessage = (response) => {
+  if (!response || !response.payload) {
+    return "An unknown error occurred";
+  }
   if (response.message === "REQUEST_BODY_VALIDATION_ERROR") {
     const fieldsWithErrors = Object.keys(response.payload).map(
       (field) =>
@@ -11,25 +13,26 @@ export const generateSnackbarMessage = (response) => {
         field.replace(/Field --> /, "").replace(/([A-Z])/g, " $1")
     );
     const uniqueFields = [...new Set(fieldsWithErrors)];
-    return `Please Check ${uniqueFields.join(", ")}`;
+    return `Please check ${uniqueFields.join(", ")}`;
   }
 
-  if (response.payload.includes("Email address is not verified"))
+  const payload = response.payload || "";
+  if (payload.includes("Email address is not verified"))
     return "Email address is not verified";
-  if (response.payload.includes("Invalid credentials provided"))
-    return "Invalid Credentials Provided";
-  if (response.payload.includes("Invalid ID")) return "Invalid ID number";
-  if (response.payload.includes("already exists"))
-    return "Email address already exists";
-  if (response.payload.includes("OTP has not expired"))
+  if (payload.includes("Invalid credentials provided"))
+    return "Invalid credentials provided";
+  if (payload.includes("Invalid ID")) return "Invalid ID number";
+  if (payload.includes("already exists")) return "Email address already exists";
+  if (payload.includes("OTP has not expired"))
     return "Previously requested OTP has not expired yet";
-  if (response.payload.includes("Missing final '@domaind"))
+  if (payload.includes("Missing final '@domaind"))
     return "Please verify email address";
-  if (response.payload.includes("Provided Otp is redeemed already"))
-    return "Provided Otp is already redeemed";
-  if (response.payload.includes("could not execute statement"))
+  if (payload.includes("Provided Otp is redeemed already"))
+    return "Provided OTP is already redeemed";
+  if (payload.includes("could not execute statement"))
     return "There was a problem with your request. Please check your input.";
-  return null;
+
+  return "An error occurred. Please try again.";
 };
 
 export const handleSendOtp = async (
@@ -42,7 +45,7 @@ export const handleSendOtp = async (
     const response = await sendOtp(email, otpType);
     if (response.successful) {
       setSnackbar({
-        open: true,
+        visible: true,
         message: "OTP sent to your email!",
         severity: "success",
       });
@@ -50,14 +53,14 @@ export const handleSendOtp = async (
     } else {
       const errorMessage = generateSnackbarMessage(response);
       setSnackbar({
-        open: true,
+        visible: true,
         message: errorMessage || "Failed to send OTP.",
         severity: "error",
       });
     }
   } catch (error) {
     setSnackbar({
-      open: true,
+      visible: true,
       message: "Failed to send OTP.",
       severity: "error",
     });
@@ -78,30 +81,30 @@ export const handleVerifyOtp = async (
     if (response && response.successful) {
       if (response.payload.validOtpProvided) {
         setSnackbar({
-          open: true,
+          visible: true,
           message: response.payload.message || "OTP verified successfully!",
           severity: "success",
         });
-        localStorage.setItem('authToken', 'login-through-otp');
+
         navigate(route);
       } else {
         setSnackbar({
-          open: true,
-          message: "Invalid OTP provided.",
+          visible: true,
+          message: generateSnackbarMessage(response) || "Invalid OTP provided.",
           severity: "error",
         });
         setShowResendOtpButton(true);
       }
     } else {
       setSnackbar({
-        open: true,
+        visible: true,
         message: generateSnackbarMessage(response),
         severity: "error",
       });
     }
   } catch (error) {
     setSnackbar({
-      open: true,
+      visible: true,
       message: "OTP verification failed. Please try again.",
       severity: "error",
     });

@@ -10,9 +10,11 @@ export default function EmailInput({ value, onChangeText, error }) {
         label="Email"
         value={value}
         onChangeText={onChangeText}
-        error={!!error}
+        error={Boolean(error)}
+        keyboardType="email-address"
+        secureTextEntry={false} // 
       />
-      {error ? <Text style={styles.errorText}>{error}</Text> : null}
+      {error && <Text style={styles.errorText}>{error}</Text>}
     </>
   );
 }

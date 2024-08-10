@@ -1,18 +1,20 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
   container: {
-    justifyContent:"flex-start",
-    margin:16
+    flex: 1,
+    padding: 16,
+    backgroundColor: '#f0f4f7',
   },
   welcomeText: {
-    textAlign: 'center',
-    marginBottom: 24,
-    color: '#4B0082',
+    textAlign: "center",
+    margin: 30,
+    color: "#4B0082",
+    fontSize:25
   },
   errorText: {
-    color: 'red',
-    textAlign: 'center',
+    color: "red",
+    textAlign: "center",
     marginBottom: 16,
   },
   otpContainer: {

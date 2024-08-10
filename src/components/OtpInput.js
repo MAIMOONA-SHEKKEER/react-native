@@ -15,28 +15,41 @@ export default function OtpLogin({
   onVerifyOtp,
   showResendOtpButton,
   onResendOtpClick,
-  reset
+  reset,
 }) {
   return (
     <View style={styles.container}>
       {!otpSent ? (
-        <CustomButton title={"Send OTP"} onPress={onSendOtp} loading={loading} />
+        <CustomButton
+          title={"Send OTP"}
+          onPress={onSendOtp}
+          loading={loading}
+        />
       ) : (
         <>
           <OTPTextInput
             handleTextChange={onOtpChange}
             inputCount={6}
             defaultValue={otp}
-            tintColor="#000" 
-            offTintColor="#ccc"  
+            tintColor="#000"
+            offTintColor="#ccc"
             containerStyle={styles.otpContainer}
             textInputStyle={styles.otpInput}
           />
           {otpError ? <Text style={styles.errorText}>{otpError}</Text> : null}
-          {!reset &&<CustomButton title={"Verify OTP"} onPress={onVerifyOtp} loading={loading} />}
-          {loading && <ActivityIndicator style={styles.loader} />}
+          {!reset && (
+            <CustomButton
+              title={"Verify OTP"}
+              onPress={onVerifyOtp}
+              loading={loading}
+            />
+          )}
           {showResendOtpButton && (
-            <LinkText title={"Resend OTP"} onPress={onResendOtpClick} disabled={loading} />
+            <LinkText
+              title={"Resend OTP"}
+              onPress={onResendOtpClick}
+              disabled={loading}
+            />
           )}
         </>
       )}

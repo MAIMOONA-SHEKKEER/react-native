@@ -1,13 +1,13 @@
 import { useState } from "react";
-import { useNavigation } from "@react-navigation/native";;
+import { useNavigation } from "@react-navigation/native";
 import {
   generateSnackbarMessage,
   handleSendOtp,
   handleVerifyOtp,
   validateOtp,
 } from "../utils/authUtils";
-import { validateEmail, validatePassword } from "../utils/validators";
-import { loginUser } from "../services/authService";
+import { validateEmail, validatePassword } from "../utils/validators";import { loginUser } from "../config/auth";
+;
 
 export default function useLogin() {
   const [credentials, setCredentials] = useState({
@@ -22,12 +22,12 @@ export default function useLogin() {
   const [loading, setLoading] = useState(false);
   const [showResendOtpButton, setShowResendOtpButton] = useState(false);
   const [snackbar, setSnackbar] = useState({
-    open: false,
+    visible: false,
     message: "",
     severity: "success",
   });
 
-  const navigation = useNavigation(); 
+  const navigation = useNavigation();
 
   const handleChange = (name, value) => {
     setCredentials((prev) => ({ ...prev, [name]: value }));
@@ -62,25 +62,24 @@ export default function useLogin() {
   const handleLogin = async () => {
     try {
       const response = await loginUser(loginMethod, credentials);
-
       if (response.successful) {
         setSnackbar({
-          open: true,
+          visible: true,
           message: "Login Successful",
           severity: "success",
         });
-        navigation.navigate("Dashboard"); 
+        navigation.navigate("Dashboard");
       } else {
         const errorMessage = generateSnackbarMessage(response);
         setSnackbar({
-          open: true,
+          visible: true,
           message: errorMessage || "Login failed. Please try again.",
           severity: "error",
         });
       }
     } catch (error) {
       setSnackbar({
-        open: true,
+        visible: true,
         message: "Login failed. Please try again.",
         severity: "error",
       });
@@ -109,7 +108,7 @@ export default function useLogin() {
   };
 
   const handleSnackbarClose = () =>
-    setSnackbar((prev) => ({ ...prev, open: false }));
+    setSnackbar((prev) => ({ ...prev, visible: false }));
 
   const onResendOtpClick = () => {
     setLoading(true);
@@ -138,4 +137,4 @@ export default function useLogin() {
     showResendOtpButton,
     onResendOtpClick,
   };
-};
+}

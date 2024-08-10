@@ -71,8 +71,12 @@ export default function LoginScreen({ navigation }) {
         title={"Don't have an account? Please Register"}
         onPress={() => navigation.navigate("Register")}
       />
+      <LinkText
+        title={"Go to dashboard"}
+        onPress={() => navigation.navigate("Dashboard")}
+      />
       <CustomSnackbar
-        visible={snackbar.open}
+        visible={snackbar.visible}
         onDismiss={handleSnackbarClose}
         type={snackbar.severity}
         duration={3000}

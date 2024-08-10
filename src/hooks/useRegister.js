@@ -1,33 +1,81 @@
-import { useState } from 'react';
-import { registerUser } from '../services/authService';
+import { useState } from "react";
+import { fieldMapping } from "../constants/fieldMapping";
+import {
+  validateEmail,
+  validateMobile,
+  validatePassword,
+} from "../utils/validators";
+import { generateSnackbarMessage } from "../utils/authUtils";
+import { registerUser } from "../config/user";
 
 export default function useRegister(initialFormState) {
   const [formData, setFormData] = useState(initialFormState);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [snackbar, setSnackbar] = useState({
+    visible: false,
+    message: "",
+    severity: "success",
+  });
 
-  const validateForm = () => {
+  const validate = () => {
     const newErrors = {};
-    if (!formData.email) {
-      newErrors.email = 'Email is required';
-    }
-    if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
-    }
-    // Add more validation as needed
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    Object.keys(formData).forEach((key) => {
+      if (key === "email" && !validateEmail(formData[key])) {
+        newErrors[key] = "Invalid email address";
+      } else if (key === "password" && !validatePassword(formData[key])) {
+        newErrors[key] = "Password must be at least 6 characters long";
+      } else if (key === "mobile" && !validateMobile(formData[key])) {
+        newErrors[key] = "Mobile number must be between 10 to 15 digits";
+      } else if (!formData[key]) {
+        newErrors[key] = `${
+          fieldMapping[key] || key.replace(/([A-Z])/g, " $1")
+        } is required`;
+      }
+    });
+    return newErrors;
   };
 
-  const handleChange = (field, value) => {
-    setFormData((prevState) => ({
-      ...prevState,
-      [field]: value,
-    }));
-    setErrors((prevErrors) => ({
-      ...prevErrors,
-      [field]: '',
-    }));
+  const handleSubmit = () => {
+    console.log("handleSubmit")
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length === 0) {
+      handleRegistration();
+    } else {
+      setErrors(validationErrors);
+    }
+  };
+
+  const handleRegistration = async () => {
+    console.log('handleRegistration');
+    setLoading(true);
+    try {
+      const response = await registerUser(formData);
+      console.log("Response:", response);
+      if (response.successful) {
+        setSnackbar({
+          visible: true,
+          message: "Registration successful!",
+          severity: "success",
+        });
+      } else {
+        const errorMessage = generateSnackbarMessage(response);
+        setSnackbar({
+          visible: true,
+          message: errorMessage || "Registration failed",
+          severity: "error",
+        });
+      }
+    } catch (error) {
+      console.error('Registration error:', error);
+      setSnackbar({
+        visible: true,
+        message: "Registration failed. Please try again.",
+        severity: "error",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleRoleChange = (value) => {
@@ -37,36 +85,32 @@ export default function useRegister(initialFormState) {
     }));
     setErrors((prevErrors) => ({
       ...prevErrors,
-      userRole: '',
+      userRole: "",
     }));
   };
 
-  const handleSubmit = async (navigation) => {
-    if (!validateForm()) return;
-
-    setLoading(true);
-    setErrors({});
-
-    try {
-      const data = await registerUser(formData);
-      if (data.success) {
-        navigation.navigate('Login');
-      } else {
-        setErrors({ global: data.message });
-      }
-    } catch (err) {
-      setErrors({ global: 'Registration failed. Please try again.' });
-    } finally {
-      setLoading(false);
-    }
+  const handleChange = (field, value) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      [field]: value,
+    }));
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [field]: "",
+    }));
   };
+
+  const handleSnackbarClose = () =>
+    setSnackbar((prev) => ({ ...prev, visible: false }));
 
   return {
     formData,
     errors,
     loading,
+    snackbar,
     handleChange,
     handleRoleChange,
     handleSubmit,
+    handleSnackbarClose,
   };
 }

@@ -1,6 +1,8 @@
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export const baseUrl = "/api/dev/user-management-service/v1";
+const baseUrl =
+  "https://cfmpcolk2k.execute-api.af-south-1.amazonaws.com/dev/user-management-service/v1/";
 
 const axiosInstance = axios.create({
   baseURL: baseUrl,
@@ -22,8 +24,8 @@ const addRefreshSubscriber = (callback) => {
 };
 
 axiosInstance.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem("authToken");
+  async (config) => {
+    const token = await AsyncStorage.getItem("authToken");
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -48,33 +50,28 @@ axiosInstance.interceptors.request.use(
 );
 
 axiosInstance.interceptors.response.use(
-  (response) => {
-    return response;
-  },
+  (response) => response,
   async (error) => {
-    const {
-      config,
-      response: { status },
-    } = error;
-    const originalRequest = config;
+    const status = error.response?.status;
+    const originalRequest = error.config;
 
     if (status === 401) {
       if (!isRefreshing) {
         isRefreshing = true;
         try {
-          const refreshToken = localStorage.getItem("refreshToken");
+          const refreshToken = await AsyncStorage.getItem("refreshToken");
           const { data } = await axiosInstance.post("/refresh-token", {
             token: refreshToken,
           });
           const newToken = data.token;
 
-          localStorage.setItem("authToken", newToken);
+          await AsyncStorage.setItem("authToken", newToken);
           isRefreshing = false;
           onRefreshed(newToken);
         } catch (refreshError) {
           isRefreshing = false;
-          localStorage.removeItem("authToken");
-          localStorage.removeItem("refreshToken");
+          await AsyncStorage.removeItem("authToken");
+          await AsyncStorage.removeItem("refreshToken");
           return Promise.reject(refreshError);
         }
       }
@@ -88,6 +85,8 @@ axiosInstance.interceptors.response.use(
 
       return retryOriginalRequest;
     }
+
+    console.error("API Error:", error);
 
     return Promise.reject(error);
   }

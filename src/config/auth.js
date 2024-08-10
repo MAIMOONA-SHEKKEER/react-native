@@ -6,16 +6,20 @@ export const loginUser = async (loginMethod, credentials) => {
     const payload = {
       combination: loginMethod,
       email: credentials.email,
-      ...(loginMethod === "email-password"
-        ? { password: credentials.password }
-        : {}),
-      ...(loginMethod === "email-otp" ? { otp: credentials.otp } : {}),
+      ...(loginMethod === 'email-password' ? { password: credentials.password } : {}),
+      ...(loginMethod === 'email-otp' ? { otp: credentials.otp } : {}),
     };
 
     const response = await api.post(endpoints.login, payload);
+    const { authToken, refreshToken } = response.data.payload;
 
+    if (authToken) {
+      await AsyncStorage.setItem('authToken', authToken);
+      await AsyncStorage.setItem('refreshToken', refreshToken);
+    }
 
     return response.data;
+
   } catch (error) {
     handleApiError(error);
   }

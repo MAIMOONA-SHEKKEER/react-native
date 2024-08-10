@@ -14,7 +14,9 @@ export default function RegisterScreen({ navigation }) {
     setConfirmPassword,
     loading,
     error,
+    snackbar,
     handleRegister,
+    handleSnackbarClose
   } = useRegister();
 
   return (
@@ -30,6 +32,8 @@ export default function RegisterScreen({ navigation }) {
         loading={loading}
         error={error}
         navigation={navigation}
+        snackbar={snackbar}
+        handleSnackbarClose={handleSnackbarClose}
       />
     </View>
   );
