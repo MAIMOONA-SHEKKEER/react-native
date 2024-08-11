@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import { sendOtp } from "../config/auth";
 import { verifyOtp } from "../config/user";
 import { fieldMapping } from "../constants/fieldMapping";
@@ -43,6 +44,7 @@ export const handleSendOtp = async (
 ) => {
   try {
     const response = await sendOtp(email, otpType);
+    console.log('otpResp',response)
     if (response.successful) {
       setSnackbar({
         visible: true,
@@ -54,7 +56,7 @@ export const handleSendOtp = async (
       const errorMessage = generateSnackbarMessage(response);
       setSnackbar({
         visible: true,
-        message: errorMessage || "Failed to send OTP.",
+        message: response.payload||errorMessage || "Failed to send OTP.",
         severity: "error",
       });
     }
@@ -62,50 +64,6 @@ export const handleSendOtp = async (
     setSnackbar({
       visible: true,
       message: "Failed to send OTP.",
-      severity: "error",
-    });
-  }
-};
-
-export const handleVerifyOtp = async (
-  email,
-  otp,
-  setSnackbar,
-  navigate,
-  route = "/dashboard",
-  setShowResendOtpButton
-) => {
-  try {
-    const response = await verifyOtp(email, otp);
-
-    if (response && response.successful) {
-      if (response.payload.validOtpProvided) {
-        setSnackbar({
-          visible: true,
-          message: response.payload.message || "OTP verified successfully!",
-          severity: "success",
-        });
-
-        navigate(route);
-      } else {
-        setSnackbar({
-          visible: true,
-          message: generateSnackbarMessage(response) || "Invalid OTP provided.",
-          severity: "error",
-        });
-        setShowResendOtpButton(true);
-      }
-    } else {
-      setSnackbar({
-        visible: true,
-        message: generateSnackbarMessage(response),
-        severity: "error",
-      });
-    }
-  } catch (error) {
-    setSnackbar({
-      visible: true,
-      message: "OTP verification failed. Please try again.",
       severity: "error",
     });
   }

@@ -58,6 +58,7 @@ export default function LoginScreen({ navigation }) {
           onVerifyOtp={onVerifyOtpClick}
           showResendOtpButton={showResendOtpButton}
           onResendOtpClick={onResendOtpClick}
+          email={credentials.email}
             />
       )}
       <ToggleLoginMethod
@@ -70,10 +71,6 @@ export default function LoginScreen({ navigation }) {
       <LinkText
         title={"Don't have an account? Please Register"}
         onPress={() => navigation.navigate("Register")}
-      />
-      <LinkText
-        title={"Go to dashboard"}
-        onPress={() => navigation.navigate("Dashboard")}
       />
       <CustomSnackbar
         visible={snackbar.visible}

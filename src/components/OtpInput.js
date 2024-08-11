@@ -16,14 +16,16 @@ export default function OtpLogin({
   showResendOtpButton,
   onResendOtpClick,
   reset,
+  email
 }) {
   return (
-    <View style={styles.container}>
+    <View>
       {!otpSent ? (
         <CustomButton
           title={"Send OTP"}
           onPress={onSendOtp}
           loading={loading}
+          disabled={email.trim() === "" || loading}
         />
       ) : (
         <>

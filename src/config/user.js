@@ -17,10 +17,8 @@ export const verifyOtp = async (email, otp) => {
       email,
       otp,
     });
-    console.log('verifyOtpRes', response.data); // Move this after the API call
     return response.data;
   } catch (error) {
-    console.log('error', error);
     handleApiError(error);
   }
 };

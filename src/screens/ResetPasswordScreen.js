@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View } from "react-native";
+import { View, ScrollView } from "react-native";
 import { TextInput, Text, Snackbar } from "react-native-paper";
 import { useResetPassword } from "../hooks/useResetPassword";
 import LinkText from "../components/LinkText";
@@ -30,7 +30,7 @@ const ResetPasswordScreen = () => {
   const handleClickShowPassword = () => setShowPassword((prev) => !prev);
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <LinkText
         title={otpSent ? "Reset Password" : "Request OTP for Password Change"}
       />
@@ -73,12 +73,7 @@ const ResetPasswordScreen = () => {
             value={credentials.newPassword}
             onChangeText={(value) => handleChange("newPassword", value)}
             error={!!errors.newPassword}
-            right={
-              <TextInput.Icon
-                icon={showPassword ? "eye-off" : "eye"}
-                onPress={handleClickShowPassword}
-              />
-            }
+            containerStyle={styles.inputFieldContainer}
           />
           {errors.newPassword ? (
             <Text style={{ color: "red" }}>{errors.newPassword}</Text>
@@ -88,7 +83,6 @@ const ResetPasswordScreen = () => {
             onPress={handleSubmit}
             loading={loading}
           />
-
           {showResendOtpButton && (
             <LinkText title={"Resend OTP"} onPress={onResendOtpClick} />
           )}
@@ -101,7 +95,7 @@ const ResetPasswordScreen = () => {
         duration={3000}
         message={snackbar.message}
       />
-    </View>
+    </ScrollView>
   );
 };
 

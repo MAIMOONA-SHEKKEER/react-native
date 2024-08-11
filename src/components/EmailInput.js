@@ -12,7 +12,7 @@ export default function EmailInput({ value, onChangeText, error }) {
         onChangeText={onChangeText}
         error={Boolean(error)}
         keyboardType="email-address"
-        secureTextEntry={false} // 
+        secureTextEntry={false} 
       />
       {error && <Text style={styles.errorText}>{error}</Text>}
     </>

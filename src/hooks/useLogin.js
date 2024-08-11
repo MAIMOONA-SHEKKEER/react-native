@@ -3,11 +3,11 @@ import { useNavigation } from "@react-navigation/native";
 import {
   generateSnackbarMessage,
   handleSendOtp,
-  handleVerifyOtp,
   validateOtp,
 } from "../utils/authUtils";
-import { validateEmail, validatePassword } from "../utils/validators";import { loginUser } from "../config/auth";
-;
+import { validateEmail, validatePassword } from "../utils/validators";
+import { loginUser } from "../config/auth";
+import { verifyOtp } from "../config/user";
 
 export default function useLogin() {
   const [credentials, setCredentials] = useState({
@@ -68,6 +68,11 @@ export default function useLogin() {
           message: "Login Successful",
           severity: "success",
         });
+        setCredentials({
+          email: "",
+          password: "",
+          otp: "",
+        });
         navigation.navigate("Dashboard");
       } else {
         const errorMessage = generateSnackbarMessage(response);
@@ -86,17 +91,50 @@ export default function useLogin() {
     }
   };
 
+  const handleVerifyOtp = async (email, otp) => {
+    try {
+      const response = await verifyOtp(email, otp);
+      console.log("verifyOtpRes", response);
+
+      if (response && response.successful) {
+        const { validOtpProvided, message } = response.payload || {};
+
+        if (validOtpProvided) {
+          setSnackbar({
+            visible: true,
+            message: message || "OTP verified successfully!",
+            severity: "success",
+          });
+          navigation.navigate("Dashboard");
+        } else {
+          setSnackbar({
+            visible: true,
+            message: message || "Invalid OTP provided.",
+            severity: "error",
+          });
+          setShowResendOtpButton(true);
+        }
+      } else {
+        setSnackbar({
+          visible: true,
+          message: "OTP verification failed.",
+          severity: "error",
+        });
+      }
+    } catch (error) {
+      setSnackbar({
+        visible: true,
+        message: "OTP verification failed. Please try again.",
+        severity: "error",
+      });
+      console.log("Error during OTP verification:", error);
+    }
+  };
+
   const onVerifyOtpClick = () => {
     if (validateOtp(credentials.otp, setOtpError)) {
       setLoading(true);
-      handleVerifyOtp(
-        credentials.email,
-        credentials.otp,
-        setSnackbar,
-        navigation,
-        "Dashboard",
-        setShowResendOtpButton
-      ).finally(() => setLoading(false));
+      handleVerifyOtp(credentials.email, credentials.otp).finally(() => setLoading(false));
     }
   };
 

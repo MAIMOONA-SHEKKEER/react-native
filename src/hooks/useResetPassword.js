@@ -63,62 +63,68 @@ export const useResetPassword = () => {
 
   const handleResetPassword = async () => {
     if (!validateOtp(credentials.otp, setOtpError)) {
-      setSnackbar({
-        visible: true,
-        message: "Invalid OTP. Please try again.",
-        severity: "error",
-      });
+      handleSnackbar("Invalid OTP. Please try again.", "error");
       setShowResendOtpButton(true);
       setLoading(false);
       return;
     }
-
+  
     setLoading(true);
+  
     try {
       const resetResponse = await resetPassword({
         email: credentials.email,
         newPassword: credentials.newPassword,
         otp: credentials.otp,
       });
-
       if (resetResponse && resetResponse.successful) {
-        if (resetResponse.payload.success) {
-          setSnackbar({
-            visible: true,
-            message: "Password reset successfully.",
-            severity: "success",
-          });
-          navigation.navigate("LoginScreen");
-        } else {
-          setSnackbar({
-            visible: true,
-            message: "Invalid OTP provided.",
-            severity: "error",
-          });
-          setShowResendOtpButton(true);
-        }
+        handleSuccessfulReset(resetResponse.payload);
       } else {
-        const errorMessage =
-          generateSnackbarMessage(resetResponse) ||
-          "Failed to reset password. Please try again.";
-        setSnackbar({
-          visible: true,
-          message: errorMessage,
-          severity: "error",
-        });
-        if (errorMessage.includes("invalid")) {
-          setShowResendOtpButton(true);
-        }
+        handleFailedReset(resetResponse);
       }
     } catch (error) {
-      setSnackbar({
-        visible: true,
-        message: error.message || "An error occurred. Please try again.",
-        severity: "error",
-      });
+      handleSnackbar(error.message || "An error occurred. Please try again.", "error");
     } finally {
       setLoading(false);
     }
+  };
+  
+  const handleSuccessfulReset = (payload) => {
+    if (payload.success) {
+      handleSnackbar("Password reset successfully.", "success");
+      resetForm();
+      navigation.navigate("Feedback", {
+        message: "Password reset successfully!",
+      });
+    } else {
+      handleSnackbar(payload.message || "Invalid OTP provided.", "error");
+      setShowResendOtpButton(true);
+    }
+  };
+  
+  const handleFailedReset = (resetResponse) => {
+    const errorMessage =resetResponse.payload || generateSnackbarMessage(resetResponse) || "Failed to reset password. Please try again.";
+    handleSnackbar(errorMessage, "error");
+  
+    if (errorMessage.includes("invalid")) {
+      setShowResendOtpButton(true);
+    }
+  };
+
+  const handleSnackbar = (message, severity) => {
+    setSnackbar({
+      visible: true,
+      message,
+      severity,
+    });
+  };
+  
+  const resetForm = () => {
+    setCredentials({
+      email: "",
+      password: "",
+      otp: "",
+    });
   };
 
   const onResendOtpClick = async () => {

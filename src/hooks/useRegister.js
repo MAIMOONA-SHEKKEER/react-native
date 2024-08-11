@@ -7,6 +7,7 @@ import {
 } from "../utils/validators";
 import { generateSnackbarMessage } from "../utils/authUtils";
 import { registerUser } from "../config/user";
+import { useNavigation } from "@react-navigation/native";
 
 export default function useRegister(initialFormState) {
   const [formData, setFormData] = useState(initialFormState);
@@ -17,6 +18,8 @@ export default function useRegister(initialFormState) {
     message: "",
     severity: "success",
   });
+
+  const navigation = useNavigation();
 
   const validate = () => {
     const newErrors = {};
@@ -37,7 +40,6 @@ export default function useRegister(initialFormState) {
   };
 
   const handleSubmit = () => {
-    console.log("handleSubmit")
     const validationErrors = validate();
     if (Object.keys(validationErrors).length === 0) {
       handleRegistration();
@@ -46,17 +48,25 @@ export default function useRegister(initialFormState) {
     }
   };
 
+  const resetFormData = () => {
+    setFormData({
+      ...initialFormState,
+    });
+  };
+
   const handleRegistration = async () => {
-    console.log('handleRegistration');
     setLoading(true);
     try {
       const response = await registerUser(formData);
-      console.log("Response:", response);
+      resetFormData();
       if (response.successful) {
         setSnackbar({
           visible: true,
           message: "Registration successful!",
           severity: "success",
+        });
+        navigation.navigate("Feedback", {
+          message: "Registration successful!",
         });
       } else {
         const errorMessage = generateSnackbarMessage(response);
@@ -67,7 +77,6 @@ export default function useRegister(initialFormState) {
         });
       }
     } catch (error) {
-      console.error('Registration error:', error);
       setSnackbar({
         visible: true,
         message: "Registration failed. Please try again.",
