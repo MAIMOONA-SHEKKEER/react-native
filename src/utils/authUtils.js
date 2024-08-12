@@ -44,7 +44,6 @@ export const handleSendOtp = async (
 ) => {
   try {
     const response = await sendOtp(email, otpType);
-    console.log('otpResp',response)
     if (response.successful) {
       setSnackbar({
         visible: true,

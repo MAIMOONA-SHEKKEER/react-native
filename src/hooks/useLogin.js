@@ -94,7 +94,6 @@ export default function useLogin() {
   const handleVerifyOtp = async (email, otp) => {
     try {
       const response = await verifyOtp(email, otp);
-      console.log("verifyOtpRes", response);
 
       if (response && response.successful) {
         const { validOtpProvided, message } = response.payload || {};
@@ -127,14 +126,15 @@ export default function useLogin() {
         message: "OTP verification failed. Please try again.",
         severity: "error",
       });
-      console.log("Error during OTP verification:", error);
     }
   };
 
   const onVerifyOtpClick = () => {
     if (validateOtp(credentials.otp, setOtpError)) {
       setLoading(true);
-      handleVerifyOtp(credentials.email, credentials.otp).finally(() => setLoading(false));
+      handleVerifyOtp(credentials.email, credentials.otp).finally(() =>
+        setLoading(false)
+      );
     }
   };
 

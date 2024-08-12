@@ -47,7 +47,13 @@ const RegistrationForm = ({ navigation }) => {
                 onChangeText={(text) => handleChange(field, text)}
                 placeholder={fieldMapping[field]}
                 secureTextEntry={field === "password"}
-                keyboardType={field === "mobileNumber" ? "numeric" : "default"}
+                keyboardType={
+                  field === "mobileNumber"
+                    ? "phone-pad"
+                    : "username"
+                    ? "email-address"
+                    : null
+                }
               />
               {errors[field] && (
                 <Text style={styles.errorText}>{errors[field]}</Text>
