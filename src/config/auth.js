@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { handleApiError } from "../utils/apiUtils";
 import { api, endpoints } from "./index";
 
@@ -11,19 +12,18 @@ export const loginUser = async (loginMethod, credentials) => {
     };
 
     const response = await api.post(endpoints.login, payload);
-    const { authToken, refreshToken } = response.data.payload;
+    const token = response.data.payload.token;
 
-    if (authToken) {
-      await AsyncStorage.setItem('authToken', authToken);
-      await AsyncStorage.setItem('refreshToken', refreshToken);
+    if (token) {
+      await AsyncStorage.setItem('authToken', token);
     }
 
     return response.data;
-
   } catch (error) {
     handleApiError(error);
   }
 };
+
 
 export const sendOtp = async (email, combination) => {
   try {

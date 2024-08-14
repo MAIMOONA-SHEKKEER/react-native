@@ -2,13 +2,13 @@ import React from "react";
 import { View, Text } from "react-native";
 import { styles } from "../styles/LoginScreenStyles";
 import CustomSnackbar from "../components/CustomSnackbar";
-import { Divider } from "react-native-paper";
 import useLogin from "../hooks/useLogin";
 import PasswordLogin from "../components/PasswordInput";
 import OtpLogin from "../components/OtpInput";
 import ToggleLoginMethod from "../components/ToggleLogin";
 import EmailInput from "../components/EmailInput";
 import LinkText from "../components/LinkText";
+import CustomChip from "../components/CustomChip";
 
 export default function LoginScreen({ navigation }) {
   const {
@@ -32,11 +32,13 @@ export default function LoginScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <Text style={styles.welcomeText}>Welcome Back!</Text>
-      <EmailInput
-        value={credentials.email}
-        onChangeText={(value) => handleChange("email", value)}
-        error={errors.email}
-      />
+      {!otpSent && (
+        <EmailInput
+          value={credentials.email}
+          onChangeText={(value) => handleChange("email", value)}
+          error={errors.email}
+        />
+      )}
       {loginMethod === "email-password" && !otpSent && (
         <PasswordLogin
           password={credentials.password}
@@ -59,15 +61,13 @@ export default function LoginScreen({ navigation }) {
           showResendOtpButton={showResendOtpButton}
           onResendOtpClick={onResendOtpClick}
           email={credentials.email}
-            />
+        />
       )}
       <ToggleLoginMethod
         loginMethod={loginMethod}
         toggleLoginMethod={toggleLoginMethod}
       />
-      <Divider />
-      <LinkText title={"OR"} />
-      <Divider />
+      <CustomChip />
       <LinkText
         title={"Don't have an account? Please Register"}
         onPress={() => navigation.navigate("Register")}
@@ -76,7 +76,6 @@ export default function LoginScreen({ navigation }) {
         visible={snackbar.visible}
         onDismiss={handleSnackbarClose}
         type={snackbar.severity}
-        duration={3000}
         message={snackbar.message}
       />
     </View>

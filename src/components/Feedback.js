@@ -1,31 +1,41 @@
 import React from "react";
-import { View, Image } from "react-native";
+import { View } from "react-native";
 import { Text } from "react-native-paper";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import {useRoute } from "@react-navigation/native";
 import CustomButton from "./CustomButton";
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import { styles } from "../styles/FeedbackScreenStyles";
+import useLogin from "../hooks/useLogin";
 
 const FeedbackComponent = () => {
-  const navigation = useNavigation();
-  const route = useRoute();
-  const { message } = route.params || {};
+  const {
+    handleBack
+  } = useLogin();
 
-  const handleBack = () => {
-    navigation.navigate("Login");
+  const route = useRoute();
+  const { message = "No message provided", type = "info" } = route.params || {};
+
+  const getIcon = () => {
+    switch (type) {
+      case "success":
+        return <Icon name="check-circle" size={100} color="green" />;
+      case "error":
+        return <Icon name="error" size={100} color="red" />;
+      default:
+        return <Icon name="info" size={100} color="blue" />;
+    }
   };
 
   return (
-    <View style={styles.mainContainer}>
-      <View style={styles.subContainer}>
-        <View style={styles.innerContainer}>
-          <Image
-            source={require("../images/success.png")}
-            style={styles.image}
-          />
-          <Text style={styles.message}>Congratulations,{message}</Text>
-          <CustomButton onPress={handleBack} title={"Go to Login"} />
-        </View>
+    <View style={styles.container}>
+      <View style={styles.iconContainer}>
+        {getIcon()}
       </View>
+      <Text style={styles.title}>
+        {type === "success" ? "Congratulations!" : type === "error" ? "Oops!" : "Notification"}
+      </Text>
+      <Text style={styles.message}>{message}</Text>
+      <CustomButton onPress={handleBack} title={type === "success" ? "Go to Login" : "Try Login Again"} />
     </View>
   );
 };

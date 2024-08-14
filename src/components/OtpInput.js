@@ -16,7 +16,7 @@ export default function OtpLogin({
   showResendOtpButton,
   onResendOtpClick,
   reset,
-  email
+  email,
 }) {
   return (
     <View>
@@ -29,6 +29,7 @@ export default function OtpLogin({
         />
       ) : (
         <>
+        <LinkText title={"Enter OTP sent to your email address"}/>
           <OTPTextInput
             handleTextChange={onOtpChange}
             inputCount={6}
@@ -43,7 +44,10 @@ export default function OtpLogin({
             <CustomButton
               title={"Verify OTP"}
               onPress={onVerifyOtp}
-              loading={loading}
+              disabled={
+                otp === "" ||
+                loading 
+              }
             />
           )}
           {showResendOtpButton && (

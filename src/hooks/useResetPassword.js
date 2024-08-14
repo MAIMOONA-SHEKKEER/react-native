@@ -24,6 +24,7 @@ export const useResetPassword = () => {
     severity: "success",
   });
   const [showResendOtpButton, setShowResendOtpButton] = useState(false);
+
   const navigation = useNavigation();
 
   const handleChange = (name, value) => {
@@ -68,9 +69,9 @@ export const useResetPassword = () => {
       setLoading(false);
       return;
     }
-  
+
     setLoading(true);
-  
+
     try {
       const resetResponse = await resetPassword({
         email: credentials.email,
@@ -83,17 +84,21 @@ export const useResetPassword = () => {
         handleFailedReset(resetResponse);
       }
     } catch (error) {
-      handleSnackbar(error.message || "An error occurred. Please try again.", "error");
+      handleSnackbar(
+        error.message || "An error occurred. Please try again.",
+        "error"
+      );
     } finally {
       setLoading(false);
     }
   };
-  
+
   const handleSuccessfulReset = (payload) => {
     if (payload.success) {
       handleSnackbar("Password reset successfully.", "success");
       resetForm();
       navigation.navigate("Feedback", {
+        type: "success",
         message: "Password reset successfully!",
       });
     } else {
@@ -101,11 +106,14 @@ export const useResetPassword = () => {
       setShowResendOtpButton(true);
     }
   };
-  
+
   const handleFailedReset = (resetResponse) => {
-    const errorMessage =resetResponse.payload || generateSnackbarMessage(resetResponse) || "Failed to reset password. Please try again.";
+    const errorMessage =
+      resetResponse.payload ||
+      generateSnackbarMessage(resetResponse) ||
+      "Failed to reset password. Please try again.";
     handleSnackbar(errorMessage, "error");
-  
+
     if (errorMessage.includes("invalid")) {
       setShowResendOtpButton(true);
     }
@@ -118,11 +126,11 @@ export const useResetPassword = () => {
       severity,
     });
   };
-  
+
   const resetForm = () => {
     setCredentials({
       email: "",
-      password: "",
+      newPassword: "",
       otp: "",
     });
   };

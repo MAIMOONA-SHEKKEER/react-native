@@ -1,13 +1,14 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
   container: {
-    justifyContent:"flex-start",
-    margin:16
+    justifyContent: "flex-start",
+    margin: 20,
+    padding: 20,
   },
   errorText: {
-    color: 'red',
-    textAlign: 'center',
+    color: "red",
+    textAlign: "center",
     marginBottom: 16,
   },
   loader: {

@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { View, ScrollView } from "react-native";
-import { TextInput, Text, Snackbar } from "react-native-paper";
+import React from "react";
+import { ScrollView } from "react-native";
+import { Text } from "react-native-paper";
 import { useResetPassword } from "../hooks/useResetPassword";
 import LinkText from "../components/LinkText";
 import InputField from "../components/InputField";
@@ -9,7 +9,7 @@ import CustomButton from "../components/CustomButton";
 import CustomSnackbar from "../components/CustomSnackbar";
 import { styles } from "../styles/ResetPasswordScreenStyles";
 
-const ResetPasswordScreen = () => {
+const ResetPasswordScreen = ({ navigation }) => {
   const {
     credentials,
     otpSent,
@@ -25,10 +25,6 @@ const ResetPasswordScreen = () => {
     handleSnackbarClose,
   } = useResetPassword();
 
-  const [showPassword, setShowPassword] = useState(false);
-
-  const handleClickShowPassword = () => setShowPassword((prev) => !prev);
-
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <LinkText
@@ -38,6 +34,7 @@ const ResetPasswordScreen = () => {
         <>
           <InputField
             label="Email Address"
+            keyboardType="email-address"
             value={credentials.email}
             onChangeText={(value) => handleChange("email", value)}
             error={!!errors.email}
@@ -69,7 +66,8 @@ const ResetPasswordScreen = () => {
 
           <InputField
             label="New Password"
-            secureTextEntry={!showPassword}
+            showEyeIcon
+            secureTextEntry
             value={credentials.newPassword}
             onChangeText={(value) => handleChange("newPassword", value)}
             error={!!errors.newPassword}
@@ -88,6 +86,10 @@ const ResetPasswordScreen = () => {
           )}
         </>
       )}
+      <LinkText
+        title={"Go back to login"}
+        onPress={() => navigation.navigate("Login")}
+      />
       <CustomSnackbar
         visible={snackbar.visible}
         onDismiss={handleSnackbarClose}

@@ -21,6 +21,7 @@ export default function PasswordLogin({
         onChangeText={onPasswordChange}
         secureTextEntry
         error={!!error}
+        showEyeIcon
       />
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
       <LinkText

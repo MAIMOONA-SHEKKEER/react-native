@@ -59,6 +59,14 @@ export default function useLogin() {
     handleLogin();
   };
 
+  const resetForm = () => {
+    setCredentials({
+      email: "",
+      password: "",
+      otp: "",
+    });
+  };
+
   const handleLogin = async () => {
     try {
       const response = await loginUser(loginMethod, credentials);
@@ -68,12 +76,10 @@ export default function useLogin() {
           message: "Login Successful",
           severity: "success",
         });
-        setCredentials({
-          email: "",
-          password: "",
-          otp: "",
-        });
-        navigation.navigate("Dashboard");
+        resetForm();
+        setTimeout(() => {
+          navigation.navigate("Dashboard");
+        }, 3000);
       } else {
         const errorMessage = generateSnackbarMessage(response);
         setSnackbar({
@@ -104,7 +110,10 @@ export default function useLogin() {
             message: message || "OTP verified successfully!",
             severity: "success",
           });
-          navigation.navigate("Dashboard");
+          setTimeout(() => {
+            navigation.navigate("Dashboard");
+            resetState();
+          }, 3000);
         } else {
           setSnackbar({
             visible: true,
@@ -148,6 +157,16 @@ export default function useLogin() {
   const handleSnackbarClose = () =>
     setSnackbar((prev) => ({ ...prev, visible: false }));
 
+  const handleBack = () => {
+    setLoginMethod("email-password");
+    navigation.navigate("Login");
+  };
+
+  const resetState = () => {
+    resetForm();
+    setOtpSent(false);
+  };
+
   const onResendOtpClick = () => {
     setLoading(true);
     handleSendOtp(credentials.email, setSnackbar, setOtpSent).finally(() => {
@@ -174,5 +193,6 @@ export default function useLogin() {
     setErrors,
     showResendOtpButton,
     onResendOtpClick,
+    handleBack,
   };
 }

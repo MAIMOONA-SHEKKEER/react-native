@@ -1,37 +1,28 @@
 import React from 'react';
 import { View, StyleSheet, Text } from 'react-native';
-import { Picker } from '@react-native-picker/picker'; 
+import RNPickerSelect from 'react-native-picker-select';
+import styles from "../styles/RegisterScreenStyles";
 
-const CustomPicker = ({ selectedValue, onValueChange, items, style }) => {
+const CustomPicker = ({formData, handleRoleChange, userRoles, errors }) => {
   return (
-    <View style={[styles.container, style]}>
-      <Picker
-        selectedValue={selectedValue}
-        onValueChange={onValueChange}
-        style={styles.picker}
-      >
-        {items.map((item) => (
-          <Picker.Item key={item.value} label={item.label} value={item.value} />
-        ))}
-      </Picker>
-    </View>
+    <View style={styles.pickerContainer}>
+    <Text style={styles.label}>User Role</Text>
+    <View style={styles.pickerWrapper}>
+    <RNPickerSelect
+      onValueChange={handleRoleChange}
+      value={formData.userRole}
+      items={userRoles.map((role) => ({ label: role.label, value: role.value }))}
+      style={{
+        inputAndroid: styles.inputAndroid,
+        inputIOS: styles.inputIOS,
+      }}
+    />
+  </View>
+    {errors.userRole && (
+      <Text style={styles.errorText}>{errors.userRole}</Text>
+    )}
+  </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    borderWidth: 1,
-    borderColor: '#ccc', 
-    borderRadius: 4, 
-    paddingHorizontal: 10, 
-    paddingVertical: 8, 
-    backgroundColor: '#fff', 
-    marginBottom: 10, 
-  },
-  picker: {
-    height: 50, 
-    width: '100%', 
-  },
-});
 
 export default CustomPicker;

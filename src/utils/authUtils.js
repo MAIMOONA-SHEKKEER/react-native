@@ -1,7 +1,9 @@
-import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axiosInstance from "../config/axiosConfig";
 import { sendOtp } from "../config/auth";
-import { verifyOtp } from "../config/user";
+import { endpoints } from "../config";
 import { fieldMapping } from "../constants/fieldMapping";
+import { messagesMapping } from "../constants/messageMapping";
 
 export const generateSnackbarMessage = (response) => {
   if (!response || !response.payload) {
@@ -18,20 +20,10 @@ export const generateSnackbarMessage = (response) => {
   }
 
   const payload = response.payload || "";
-  if (payload.includes("Email address is not verified"))
-    return "Email address is not verified";
-  if (payload.includes("Invalid credentials provided"))
-    return "Invalid credentials provided";
-  if (payload.includes("Invalid ID")) return "Invalid ID number";
-  if (payload.includes("already exists")) return "Email address already exists";
-  if (payload.includes("OTP has not expired"))
-    return "Previously requested OTP has not expired yet";
-  if (payload.includes("Missing final '@domaind"))
-    return "Please verify email address";
-  if (payload.includes("Provided Otp is redeemed already"))
-    return "Provided OTP is already redeemed";
-  if (payload.includes("could not execute statement"))
-    return "There was a problem with your request. Please check your input.";
+
+  for (const [key, value] of Object.entries(messagesMapping)) {
+    if (payload.includes(key)) return value;
+  }
 
   return "An error occurred. Please try again.";
 };
@@ -75,4 +67,55 @@ export const validateOtp = (otp, setOtpError) => {
   }
   setOtpError("");
   return true;
+};
+
+export const checkAuth = async (setSnackbar, navigation) => {
+  try {
+    const token = await AsyncStorage.getItem("authToken");
+
+    if (!token) {
+      navigation.navigate("Feedback", {
+        type: "error",
+        message: "No authentication token found. Please log in again.",
+      });
+      return { auth: false };
+    }
+
+    const response = await axiosInstance.post(
+      endpoints.verifyToken,
+      {},
+      {
+        withCredentials: true,
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+
+    if (response.data.successful) {
+      if (response.data.payload.successful) {
+        return { auth: true };
+      } else {
+        navigation.navigate("Feedback", {
+          type: "error",
+          message: `Authentication failed: ${
+            response.data.payload.payload?.notValidReason || "Unknown reason"
+          }`,
+        });
+        return { auth: false };
+      }
+    } else {
+      navigation.navigate("Feedback", {
+        type: "error",
+        message: "Authentication failed. Please try again.",
+      });
+      return { auth: false };
+    }
+  } catch (error) {
+    navigation.navigate("Feedback", {
+      type: "error",
+      message: "Error verifying token. Please try again.",
+    });
+    return { auth: false };
+  }
 };

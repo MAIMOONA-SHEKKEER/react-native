@@ -3,9 +3,7 @@ import {
   View,
   Text,
   ActivityIndicator,
-  KeyboardAvoidingView,
   ScrollView,
-  Platform,
 } from "react-native";
 import CustomButton from "../components/CustomButton";
 import styles from "../styles/RegisterScreenStyles";
@@ -36,42 +34,38 @@ const RegistrationForm = ({ navigation }) => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {Object.keys(formData).map(
-        (field) =>
-          field !== "userRole" && (
-            <View key={field} style={styles.inputContainer}>
-              <InputField
-                style={styles.input}
-                value={formData[field]}
-                label={fieldMapping[field]}
-                onChangeText={(text) => handleChange(field, text)}
-                placeholder={fieldMapping[field]}
-                secureTextEntry={field === "password"}
-                keyboardType={
-                  field === "mobileNumber"
-                    ? "phone-pad"
-                    : "username"
-                    ? "email-address"
-                    : null
-                }
-              />
-              {errors[field] && (
-                <Text style={styles.errorText}>{errors[field]}</Text>
-              )}
-            </View>
-          )
+      {Object.keys(formData).map((field) =>
+        field !== "userRole" ? (
+          <View key={field} style={styles.inputContainer}>
+            <InputField
+              style={styles.input}
+              value={formData[field]}
+              label={fieldMapping[field]}
+              required
+              onChangeText={(text) => handleChange(field, text)}
+              placeholder={fieldMapping[field]}
+              secureTextEntry={field === "password"}
+              showEyeIcon={field === "password"}
+              keyboardType={
+                field === "mobileNumber"
+                  ? "phone-pad"
+                  : field === "username"
+                  ? "email-address"
+                  : "default"
+              }
+            />
+            {errors[field] && (
+              <Text style={styles.errorText}>{errors[field]}</Text>
+            )}
+          </View>
+        ) : null
       )}
-      <View style={styles.pickerContainer}>
-        <Text style={styles.label}>User Role</Text>
         <CustomPicker
-          selectedValue={formData.userRole}
-          onValueChange={(itemValue) => handleRoleChange(itemValue)}
-          items={userRoles}
+          formData={formData}
+          errors={errors}
+          handleRoleChange={handleRoleChange}
+          userRoles={userRoles}
         />
-        {errors.userRole && (
-          <Text style={styles.errorText}>{errors.userRole}</Text>
-        )}
-      </View>
       <CustomButton
         title={
           loading ? <ActivityIndicator size="small" color="#fff" /> : "Register"

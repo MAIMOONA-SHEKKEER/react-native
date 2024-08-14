@@ -1,33 +1,23 @@
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
-  mainContainer: {
+  container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
   },
-  subContainer: {
-    width: 419,
-    height: 284,
-    justifyContent: "center",
-    alignItems: "center",
+  iconContainer: {
+    marginBottom: 20,
   },
-  innerContainer: {
-    alignItems: "center",
-  },
-  image: {
-    height: 100,
-    width: 100,
-    marginTop: -50,
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 10,
   },
   message: {
     fontSize: 16,
-    fontWeight: "700",
-    textAlign: "center",
-    marginVertical: 16,
-    color: "#4B0082",
-  },
-  button: {
-    margin: 8,
+    marginBottom: 20,
+    textAlign: 'center',
   },
 });

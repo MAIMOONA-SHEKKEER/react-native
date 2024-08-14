@@ -58,15 +58,17 @@ export default function useRegister(initialFormState) {
     setLoading(true);
     try {
       const response = await registerUser(formData);
-      resetFormData();
+      console.log('regRes',response)
       if (response.successful) {
         setSnackbar({
           visible: true,
           message: "Registration successful!",
           severity: "success",
         });
+        resetFormData();
         navigation.navigate("Feedback", {
           message: "Registration successful!",
+          type:"success"
         });
       } else {
         const errorMessage = generateSnackbarMessage(response);
@@ -82,6 +84,7 @@ export default function useRegister(initialFormState) {
         message: "Registration failed. Please try again.",
         severity: "error",
       });
+      console.log('err',error)
     } finally {
       setLoading(false);
     }
