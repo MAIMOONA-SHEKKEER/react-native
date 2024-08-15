@@ -79,7 +79,7 @@ export default function useLogin() {
         resetForm();
         setTimeout(() => {
           navigation.navigate("Dashboard");
-        }, 3000);
+        }, 2000);
       } else {
         const errorMessage = generateSnackbarMessage(response);
         setSnackbar({
@@ -113,7 +113,7 @@ export default function useLogin() {
           setTimeout(() => {
             navigation.navigate("Dashboard");
             resetState();
-          }, 3000);
+          }, 2000);
         } else {
           setSnackbar({
             visible: true,

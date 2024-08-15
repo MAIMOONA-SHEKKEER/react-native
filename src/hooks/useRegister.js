@@ -58,7 +58,6 @@ export default function useRegister(initialFormState) {
     setLoading(true);
     try {
       const response = await registerUser(formData);
-      console.log('regRes',response)
       if (response.successful) {
         setSnackbar({
           visible: true,
@@ -84,7 +83,6 @@ export default function useRegister(initialFormState) {
         message: "Registration failed. Please try again.",
         severity: "error",
       });
-      console.log('err',error)
     } finally {
       setLoading(false);
     }
